@@ -1,0 +1,59 @@
+<title>
+  Name Picker
+</title>
+<head>
+  <style>
+    body {
+      background-color: powderblue;
+    }
+    button {
+      width: 100%;
+      margin-top: 10px;
+      font-size: 36px;
+      color: white;
+      background-color: blue;
+      border-radius: 5px;
+    }
+    #nameList {
+      width: 100%;
+      font-size: 20px;
+    }
+    #pickedName {
+      background-color: white;
+      border: 2px solid green;
+      font-weight: 700;
+      font-size: 48px;
+      text-align: center;
+    }
+  </style>
+  <script>
+  function pickNameFromList() {
+    const nameListElement = document.getElementById('nameList');
+    const nameList = nameListElement.value.replace(/(\r\n|\n|\r)/gm,',').split(',');
+    const pickedName = nameList[Math.floor(Math.random()*nameList.length)];
+    nameListElement.style.display = 'none';
+    const pickedNameElement = document.getElementById('pickedName');
+    pickedNameElement.innerHTML = pickedName;
+    pickedNameElement.style.display = 'block';
+    document.getElementById('pickNameButton').style.display = 'none';
+    document.getElementById('tryAgainButton').style.display = 'block';
+  }
+  function showNameList() {
+    document.getElementById('nameList').style.display = 'block';
+    document.getElementById('pickNameButton').style.display = 'block';
+    document.getElementById('pickedName').style.display = 'none';
+    document.getElementById('tryAgainButton').style.display = 'none';
+  }
+  </script>
+</head>
+<body>
+  <h1>Name Picker</h1>
+  <textarea id="nameList" placeholder="Enter a list of names" rows="15"></textarea>
+  <div id="pickedName" style="display: none"></div>
+  <button id="pickNameButton" onclick="pickNameFromList()">
+    Go!
+  </button>
+  <button id="tryAgainButton" onclick="showNameList()" style="display: none;">
+    Pick Another Name
+  </button>
+</body>
