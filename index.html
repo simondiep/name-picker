@@ -1,11 +1,13 @@
 <title>
   Name Picker
 </title>
+
 <head>
   <style>
     body {
       background-color: peachpuff;
     }
+
     button {
       width: 100%;
       margin-top: 10px;
@@ -14,6 +16,7 @@
       background-color: royalblue;
       border-radius: 5px;
     }
+
     #nameList {
       width: 100%;
       font-size: 20px;
@@ -22,6 +25,7 @@
       border-radius: 10px;
       padding: 20px;
     }
+
     #pickedName {
       font-weight: 700;
       font-size: 48px;
@@ -29,75 +33,118 @@
       line-height: 100px;
       height: 100px;
     }
+
     .randomizingName {
       animation: flash linear 1s infinite;
     }
+
     .finalName {
       background: none;
       border: none;
       animation: pulse linear 1s infinite;
     }
+
     @keyframes flash {
-      0% { opacity: 1; } 
-      50% { opacity: .1; } 
-      100% { opacity: 1; }
+      0% {
+        opacity: .1;
+      }
+      50% {
+        opacity: 1;
+      }
+      100% {
+        opacity: .1;
+      }
     }
+
     @keyframes pulse {
-      0% { font-size: 48px; } 
-      50% { font-size: 96px; } 
-      100% { font-size: 48px; }
+      0% {
+        font-size: 48px;
+      }
+      50% {
+        font-size: 96px;
+      }
+      100% {
+        font-size: 48px;
+      }
     }
   </style>
   <script>
-  async function pickNameFromList() {
-    const nameListElement = document.getElementById('nameList');
-    if (!nameListElement.value) {
-      return;
+    let nameSelected = false;
+
+    async function pickNameFromList() {
+      const nameListElement = document.getElementById('nameList');
+      if (!nameListElement.value) {
+        return;
+      }
+      nameListElement.style.display = 'none';
+      const nameList = getNameList();
+      document.getElementById('pickNameButton').style.display = 'none';
+      document.getElementById('pickedName').classList.add('randomizingName');
+      document.getElementById('selectDisplayedNameButton').style.display = 'block';
+      const startTime = Date.now();
+      while (!nameSelected) {
+        const pickedName = nameList[Math.floor(Math.random() * nameList.length)];
+        showPickedName(pickedName);
+        await sleep(1000);
+      }
     }
-    let nameList = nameListElement.value.replace(/(\r\n|\n|\r)/gm,',').split(',');
-    nameList = nameList.filter((val) => val.trim());
-    nameListElement.style.display = 'none';
-    document.getElementById('pickNameButton').style.display = 'none';
-    document.getElementById('pickedName').classList.add('randomizingName');
-    const startTime = Date.now();
-    while (Date.now() - startTime < 3000) {
-      const pickedName = nameList[Math.floor(Math.random()*nameList.length)];
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+    function getNameList() {
+      const nameListElement = document.getElementById('nameList');
+      if (!nameListElement.value) {
+        return;
+      }
+      let nameList = nameListElement.value.replace(/(\r\n|\n|\r)/gm, ',').split(',');
+      return nameList.filter((val) => val.trim());
+    }
+    function showPickedName(pickedName) {
+      const pickedNameElement = document.getElementById('pickedName');
+      pickedNameElement.innerHTML = pickedName;
+      pickedNameElement.style.display = 'block';
+    }
+    function showNameList() {
+      nameSelected = false;
+      document.getElementById('nameList').style.display = 'block';
+      document.getElementById('pickNameButton').style.display = 'block';
+      document.getElementById('pickedName').style.display = 'none';
+      document.getElementById('tryAgainButton').style.display = 'none';
+      document.getElementById('pickedName').classList.remove('finalName');
+    }
+    function selectDisplayedName() {
+      // actually randomize the name
+      const nameList = getNameList();
+      const pickedName = nameList[Math.floor(Math.random() * nameList.length)];
       showPickedName(pickedName);
-      await sleep(50);
+      nameSelected = true;
+      document.getElementById('pickedName').classList.remove('randomizingName');
+      document.getElementById('pickedName').classList.add('finalName');
+      document.getElementById('selectDisplayedNameButton').style.display = 'none';
+      document.getElementById('tryAgainButton').style.display = 'block';
     }
-    document.getElementById('pickedName').classList.remove('randomizingName');
-    document.getElementById('pickedName').classList.add('finalName');
-    document.getElementById('tryAgainButton').style.display = 'block';
-  }
-  function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-  function showPickedName(pickedName) {
-    const pickedNameElement = document.getElementById('pickedName');
-    pickedNameElement.innerHTML = pickedName;
-    pickedNameElement.style.display = 'block';
-  }
-  function showNameList() {
-    document.getElementById('nameList').style.display = 'block';
-    document.getElementById('pickNameButton').style.display = 'block';
-    document.getElementById('pickedName').style.display = 'none';
-    document.getElementById('tryAgainButton').style.display = 'none';
-    document.getElementById('pickedName').classList.remove('finalName');
-  }
   </script>
 </head>
+
 <body>
   <h1>Name Picker</h1>
-  <textarea id="nameList" placeholder="Enter a list of names" rows="15">Albert
-Bob
-Carrie
-Deiter
-Elvis
-Fran
-Giovanni</textarea>
+  <textarea id="nameList" placeholder="Enter a list of names" rows="15">Chris
+Simon
+Grant
+Lyric
+Thomas
+Nater
+Maria
+Mike
+Caitlin
+Derek
+Marcus</textarea>
   <div id="pickedName" style="display: none"></div>
   <button id="pickNameButton" onclick="pickNameFromList()">
     Go!
+  </button>
+  <button id="selectDisplayedNameButton" onclick="selectDisplayedName()" style="display: none;">
+    Select Name
   </button>
   <button id="tryAgainButton" onclick="showNameList()" style="display: none;">
     Pick Another Name
